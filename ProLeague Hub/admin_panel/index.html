@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | ProLeague Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }</style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <div class="w-64 bg-slate-900 p-5 border-l border-slate-800 hidden md:block">
+            <h2 class="text-2xl font-bold text-blue-500 mb-10 text-center italic">ProLeague Hub</h2>
+            <nav class="space-y-4 text-slate-300">
+                <a href="index.html" class="block p-3 bg-blue-600 text-white rounded-lg">الرئيسية</a>
+                <a href="players.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">إدارة اللاعبين</a>
+                <a href="tournaments.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">الدوريات</a>
+                <a href="settings.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">الإعدادات</a>
+            </nav>
+        </div>
+
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+            <h1 class="text-3xl font-bold mb-8">إحصائيات البطولة الحية</h1>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                    <p class="text-slate-400 text-sm">إجمالي اللاعبين المسجلين</p>
+                    <h2 id="totalPlayers" class="text-4xl font-bold text-blue-500 mt-2">...</h2>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                    <p class="text-slate-400 text-sm">إجمالي النقاط المسجلة</p>
+                    <h2 id="totalPoints" class="text-4xl font-bold text-green-500 mt-2">...</h2>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                    <p class="text-slate-400 text-sm">حالة الربط مع السيرفر</p>
+                    <h2 class="text-xl font-bold text-yellow-500 mt-2 flex items-center gap-2">
+                        <span class="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></span> متصل (Cloud)
+                    </h2>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 text-center">
+                <h3 class="text-xl font-bold text-slate-300">مرحباً بك في ProLeague Hub</h3>
+                <p class="text-slate-500 mt-2">استخدم القائمة الجانبية للتحكم في بيانات البطولة واللاعبين.</p>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // كود حماية بسيط وفوري
+(function() {
+    const adminPass = localStorage.getItem('admin_access');
+    if (adminPass !== "SUPER_SECRET_2026") { // يمكنك تغيير كلمة السر هنا
+        const attempt = prompt("هذه المنطقة مخصصة للإدارة فقط. أدخل كلمة السر:");
+        if (attempt === "SUPER_SECRET_2026") {
+            localStorage.setItem('admin_access', "SUPER_SECRET_2026");
+        } else {
+            alert("دخول غير مصرح به!");
+            window.location.href = "../index.html"; // طرده للصفحة الرئيسية
+        }
+    }
+})();
+        // أضف هذا الكود في أول كل صفحة إدارية
+if (sessionStorage.getItem("isLoggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAc9yv1jbH5FECsNW3-_aKixhN5puPnJY8",
+            authDomain: "proleague-hub.firebaseapp.com",
+            projectId: "proleague-hub",
+            storageBucket: "proleague-hub.firebasestorage.app",
+            messagingSenderId: "281737362986",
+            appId: "1:281737362986:web:48dd5186973ae2ba218d53",
+            measurementId: "G-0NEER7M2GJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function updateStats() {
+            const querySnapshot = await getDocs(collection(db, "players"));
+            let count = 0;
+            let totalPoints = 0;
+
+            querySnapshot.forEach((doc) => {
+                count++;
+                totalPoints += (doc.data().points || 0);
+            });
+
+            document.getElementById('totalPlayers').innerText = count;
+            document.getElementById('totalPoints').innerText = totalPoints;
+        }
+
+        updateStats();
+    </script>
+</body>
+</html>

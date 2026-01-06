@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة اللاعبين | ProLeague Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <div class="w-64 bg-slate-900 p-5 border-l border-slate-800 hidden md:block">
+            <h2 class="text-2xl font-bold text-blue-500 mb-10 text-center italic">ProLeague Hub</h2>
+            <nav class="space-y-4 text-slate-300">
+                <a href="index.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">الرئيسية</a>
+                <a href="players.html" class="block p-3 bg-blue-600 text-white rounded-lg transition">إدارة اللاعبين</a>
+                <a href="tournaments.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">الدوريات</a>
+                <a href="settings.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">الإعدادات</a>
+            </nav>
+        </div>
+
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold">إدارة اللاعبين</h1>
+                    <p class="text-slate-400">تحكم في مهارات ونقاط اللاعبين</p>
+                </div>
+                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-xl font-bold transition flex items-center gap-2 shadow-lg shadow-blue-900/20">
+                    <span>+</span> إضافة لاعب بمهاراته
+                </button>
+            </div>
+
+            <div class="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
+                <table class="w-full text-right">
+                    <thead class="bg-slate-800 text-slate-400 uppercase text-xs">
+                        <tr>
+                            <th class="p-4">اللاعب والمركز</th>
+                            <th class="p-4 text-center">النقاط الحالية</th>
+                            <th class="p-4 text-center">إضافة نقاط</th>
+                            <th class="p-4 text-center">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playersTableBody" class="divide-y divide-slate-800">
+                        </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <div id="playerModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-50 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-700 p-8 rounded-3xl w-full max-w-md shadow-2xl">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2 text-blue-400">
+                <span class="bg-blue-600/20 p-2 rounded-lg">⚽</span> إضافة لاعب جديد
+            </h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 italic">الاسم الكامل</label>
+                    <input type="text" id="playerNameInput" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl focus:outline-none focus:border-blue-500 transition">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 italic">المركز في الملعب</label>
+                    <select id="playerPositionSelect" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl">
+                        <option value="GK">حارس مرمى</option>
+                        <option value="DEF">دفاع</option>
+                        <option value="MID">وسط</option>
+                        <option value="ST">هجوم</option>
+                    </select>
+                </div>
+
+                <div class="pt-4 border-t border-slate-800">
+                    <p class="text-xs font-bold text-slate-500 mb-4 uppercase">تقييم المهارات (0 - 99)</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1">السرعة (PAC)</label>
+                            <input type="number" id="pSpeed" value="75" max="99" min="1" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-center font-bold">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1">التسديد (SHO)</label>
+                            <input type="number" id="pShoot" value="70" max="99" min="1" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-center font-bold">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1">التمرير (PAS)</label>
+                            <input type="number" id="pPass" value="65" max="99" min="1" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-center font-bold">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 block mb-1">الدفاع (DEF)</label>
+                            <input type="number" id="pDef" value="60" max="99" min="1" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg text-center font-bold">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 mt-8">
+                    <button onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 p-3 rounded-xl font-bold transition">إلغاء</button>
+                    <button id="savePlayerBtn" class="flex-1 bg-blue-600 hover:bg-blue-500 p-3 rounded-xl font-bold transition shadow-lg shadow-blue-900/40">حفظ البيانات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // كود حماية بسيط وفوري
+(function() {
+    const adminPass = localStorage.getItem('admin_access');
+    if (adminPass !== "SUPER_SECRET_2026") { // يمكنك تغيير كلمة السر هنا
+        const attempt = prompt("هذه المنطقة مخصصة للإدارة فقط. أدخل كلمة السر:");
+        if (attempt === "SUPER_SECRET_2026") {
+            localStorage.setItem('admin_access', "SUPER_SECRET_2026");
+        } else {
+            alert("دخول غير مصرح به!");
+            window.location.href = "../index.html"; // طرده للصفحة الرئيسية
+        }
+    }
+})();
+        // أضف هذا الكود في أول كل صفحة إدارية
+if (sessionStorage.getItem("isLoggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyAc9yv1jbH5FECsNW3-_aKixhN5puPnJY8",
+            authDomain: "proleague-hub.firebaseapp.com",
+            projectId: "proleague-hub",
+            storageBucket: "proleague-hub.firebasestorage.app",
+            messagingSenderId: "281737362986",
+            appId: "1:281737362986:web:48dd5186973ae2ba218d53",
+            measurementId: "G-0NEER7M2GJ"
+        };
+    
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    
+        async function fetchPlayers() {
+            const querySnapshot = await getDocs(collection(db, "players"));
+            const tableBody = document.getElementById('playersTableBody');
+            tableBody.innerHTML = ""; 
+    
+            querySnapshot.forEach((docSnap) => {
+                const player = docSnap.data();
+                const row = `
+                    <tr class="hover:bg-slate-800/50 transition border-b border-slate-800 group">
+                        <td class="p-4 flex items-center gap-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center font-black text-xl shadow-lg">${player.name[0]}</div>
+                            <div>
+                                <p class="font-bold text-slate-100">${player.name}</p>
+                                <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">${player.position || 'ST'}</p>
+                            </div>
+                        </td>
+                        <td class="p-4 text-center font-black text-green-400 text-xl">${player.points}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex gap-1 justify-center">
+                                <button onclick="updatePoints('${docSnap.id}', 3)" class="bg-green-600/10 text-green-500 px-3 py-2 rounded-lg hover:bg-green-600 hover:text-white transition font-bold border border-green-600/20 text-xs">+3 فوز</button>
+                                <button onclick="updatePoints('${docSnap.id}', 1)" class="bg-yellow-600/10 text-yellow-500 px-3 py-2 rounded-lg hover:bg-yellow-600 hover:text-white transition font-bold border border-yellow-600/20 text-xs">+1 تعادل</button>
+                            </div>
+                        </td>
+                        <td class="p-4 text-center">
+                            <button onclick="deletePlayer('${docSnap.id}')" class="text-slate-600 hover:text-red-500 transition p-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+    
+        window.updatePoints = async (playerId, amount) => {
+            try {
+                const playerRef = doc(db, "players", playerId);
+                await updateDoc(playerRef, { points: increment(amount) });
+                fetchPlayers();
+            } catch (e) { console.error("Error:", e); }
+        };
+    
+        // دالة الحفظ المعدلة بالمهارات
+        document.getElementById('savePlayerBtn').onclick = async () => {
+            const name = document.getElementById('playerNameInput').value;
+            const position = document.getElementById('playerPositionSelect').value;
+            
+            // جلب قيم المهارات
+            const speed = document.getElementById('pSpeed').value;
+            const shoot = document.getElementById('pShoot').value;
+            const pass = document.getElementById('pPass').value;
+            const def = document.getElementById('pDef').value;
+
+            if (!name) return alert("من فضلك اكتب اسم اللاعب!");
+    
+            try {
+                await addDoc(collection(db, "players"), {
+                    name: name,
+                    position: position,
+                    points: 0,
+                    status: "نشط",
+                    stats: {
+                        speed: Number(speed),
+                        shoot: Number(shoot),
+                        pass: Number(pass),
+                        def: Number(def)
+                    }
+                });
+                closeModal();
+                fetchPlayers();
+                // تنظيف الحقول
+                document.getElementById('playerNameInput').value = "";
+            } catch (e) { alert("حدث خطأ أثناء الحفظ"); }
+        };
+    
+        window.deletePlayer = async (id) => {
+            if (confirm("هل أنت متأكد من حذف هذا اللاعب؟")) {
+                await deleteDoc(doc(db, "players", id));
+                fetchPlayers();
+            }
+        };
+    
+        window.openModal = () => document.getElementById('playerModal').classList.replace('hidden', 'flex');
+        window.closeModal = () => document.getElementById('playerModal').classList.replace('flex', 'hidden');
+    
+        fetchPlayers();
+    </script>
+</body>
+</html>

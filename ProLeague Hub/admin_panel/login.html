@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة ProLeague | دخول ذكي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e293b);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 3rem;
+            position: relative;
+            z-index: 10;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .admin-vault {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .google-btn {
+            background: white;
+            color: #1f2937;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(to right, #4f46e5, #9333ea);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: 1;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-100px, -100px); }
+            to { transform: translate(100px, 100px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob" style="top: 10%; left: 10%;"></div>
+    <div class="blob" style="bottom: 10%; right: 10%; background: #06b6d4;"></div>
+
+    <div id="mainCard" class="glass-card w-full max-w-[450px] p-10 text-center mx-4">
+        
+        <div id="loginSection">
+            <div class="relative inline-block mb-8">
+                <div class="absolute inset-0 blur-2xl bg-white/20 rounded-full"></div>
+                <div class="bg-white p-5 rounded-full shadow-inner relative">
+                    <svg viewBox="0 0 48 48" width="40" height="40">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <h1 class="text-3xl font-black text-white mb-2 italic tracking-tighter">PROLEAGUE HUB</h1>
+            <p class="text-slate-400 text-sm mb-10 font-light tracking-wide">مرحباً بك، سجل دخولك للمتابعة</p>
+
+            <button id="googleSignInBtn" class="google-btn w-full flex items-center justify-center gap-4 py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] group">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="22">
+                Continue with Google
+            </button>
+        </div>
+
+        <div id="adminSection" class="hidden">
+            <div class="mb-6">
+                <div class="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/50">
+                    <span class="text-3xl animate-pulse">🔐</span>
+                </div>
+                <h2 class="text-2xl font-black text-yellow-500 italic">ADMIN VAULT</h2>
+                <p class="text-slate-300 text-xs mt-2">تم التعرف على هوية المسؤول. أدخل مفتاح الأمان:</p>
+            </div>
+            
+            <input type="password" id="adminSecret" placeholder="••••••" 
+                class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl text-center text-white text-2xl tracking-[0.5em] mb-4 outline-none focus:border-yellow-500 transition-all">
+            
+            <button id="verifyAdminBtn" class="w-full bg-yellow-600 text-black py-4 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40">
+                Unlock Access
+            </button>
+        </div>
+
+        <div class="flex justify-center gap-6 mt-10 opacity-60">
+            <div class="text-[10px] text-slate-400 font-bold uppercase text-right">
+                <span class="block text-blue-500">v2.1.0</span> Active Build
+            </div>
+            <div class="w-[1px] bg-slate-700"></div>
+            <div id="statusText" class="text-[10px] text-slate-400 font-bold uppercase text-left">
+                <span class="block text-green-500">Secure</span> Portal Standby
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAc9yv1jbH5FECsNW3-_aKixhN5puPnJY8",
+            authDomain: "proleague-hub.firebaseapp.com",
+            projectId: "proleague-hub",
+            storageBucket: "proleague-hub.firebasestorage.app",
+            messagingSenderId: "281737362986",
+            appId: "1:281737362986:web:48dd5186973ae2ba218d53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // إعدادات الأدمن
+        const ADMIN_EMAIL = "mtag1337@gmail.com"; // ضع إيميلك الحقيقي هنا
+        const ADMIN_PASS = "mtag1337@010#@010#"; // باسورد الأدمن
+
+        document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+
+                if (user.email === ADMIN_EMAIL) {
+                    // تحويل الواجهة لواجهة الأدمن
+                    document.getElementById('loginSection').classList.add('hidden');
+                    document.getElementById('adminSection').classList.remove('hidden');
+                    document.getElementById('mainCard').classList.add('admin-vault');
+                    document.getElementById('statusText').innerHTML = '<span class="block text-yellow-500">Detected</span> Admin Mode';
+                } else {
+                    // مستخدم عادي
+                    alert("أهلاً بك " + user.displayName + ". سيتم توجيهك لصفحة البطولة.");
+                    window.location.href = "index.html"; 
+                }
+            } catch (error) {
+                alert("خطأ في الاتصال بجوجل.");
+            }
+        });
+
+        document.getElementById('verifyAdminBtn').addEventListener('click', () => {
+            const secret = document.getElementById('adminSecret').value;
+            if (secret === ADMIN_PASS) {
+                localStorage.setItem('adminToken', 'verified_2026');
+                window.location.href = "admin_panel/settings.html";
+            } else {
+                alert("مفتاح الأمان غير صحيح!");
+                document.getElementById('adminSecret').value = "";
+            }
+        });
+    </script>
+</body>
+</html>

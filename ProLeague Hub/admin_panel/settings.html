@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات المنصة | ProLeague Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #0f172a; color: white; }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <div class="w-64 bg-slate-900 p-5 border-l border-slate-800 hidden md:block">
+            <h2 class="text-2xl font-bold text-blue-500 mb-10 text-center">ProLeague Hub</h2>
+            <nav class="space-y-4 text-slate-300">
+                <a href="index.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">الرئيسية</a>
+                <a href="players.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">إدارة اللاعبين</a>
+                <a href="matches.html" class="block p-3 hover:bg-slate-800 rounded-lg transition">المباريات</a>
+                <a href="settings.html" class="block p-3 bg-blue-600 text-white rounded-lg transition">الإعدادات</a>
+            </nav>
+        </div>
+
+        <main class="flex-1 p-6 md:p-10 overflow-y-auto">
+            <h1 class="text-3xl font-bold mb-8">إعدادات المنصة</h1>
+
+            <div class="max-w-4xl space-y-8">
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                    <h2 class="text-xl font-bold mb-6 text-blue-400">إعدادات البطولة الأساسية</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-2">اسم البطولة / الأكاديمية</label>
+                            <input type="text" id="leagueName" placeholder="مثلاً: دوري المحترفين" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl focus:outline-none focus:border-blue-500 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-2">تاريخ البدء</label>
+                            <input type="date" id="startDate" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl focus:outline-none focus:border-blue-500 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-2">نقاط الفوز</label>
+                            <input type="number" id="winPoints" value="3" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-2">العملة المستخدمة</label>
+                            <select id="currency" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl text-white">
+                                <option value="EGP">جنيه مصري (EGP)</option>
+                                <option value="USD">دولار أمريكي (USD)</option>
+                                <option value="SAR">ريال سعودي (SAR)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                    <h2 class="text-xl font-bold mb-6 text-green-400">نظام الجوائز والمظهر</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-slate-800 rounded-xl">
+                            <div>
+                                <p class="font-bold">تفعيل لوحة المتصدرين العامة</p>
+                                <p class="text-xs text-slate-500">السماح للاعبين برؤية ترتيبهم من الخارج</p>
+                            </div>
+                            <input type="checkbox" id="showLeaderboard" checked class="w-6 h-6 accent-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-2">قيمة الجائزة للمركز الأول</label>
+                            <input type="text" id="firstPrize" placeholder="مثلاً: 5000 جنيه" class="w-full bg-slate-800 border border-slate-700 p-3 rounded-xl text-white">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="saveSettings()" id="saveBtn" class="bg-blue-600 hover:bg-blue-500 px-10 py-3 rounded-xl font-bold transition flex items-center gap-2">
+                        <span>حفظ التغييرات</span>
+                    </button>
+                    <button onclick="resetSettings()" class="bg-slate-800 hover:bg-red-900/30 hover:text-red-500 px-10 py-3 rounded-xl font-bold transition border border-slate-700">إعادة ضبط</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        // كود حماية بسيط وفوري
+(function() {
+    const adminPass = localStorage.getItem('admin_access');
+    if (adminPass !== "SUPER_SECRET_2026") { // يمكنك تغيير كلمة السر هنا
+        const attempt = prompt("هذه المنطقة مخصصة للإدارة فقط. أدخل كلمة السر:");
+        if (attempt === "SUPER_SECRET_2026") {
+            localStorage.setItem('admin_access', "SUPER_SECRET_2026");
+        } else {
+            alert("دخول غير مصرح به!");
+            window.location.href = "../index.html"; // طرده للصفحة الرئيسية
+        }
+    }
+})();
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAc9yv1jbH5FECsNW3-_aKixhN5puPnJY8",
+            authDomain: "proleague-hub.firebaseapp.com",
+            projectId: "proleague-hub",
+            storageBucket: "proleague-hub.firebasestorage.app",
+            messagingSenderId: "281737362986",
+            appId: "1:281737362986:web:48dd5186973ae2ba218d53"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // تحميل الإعدادات الحالية عند فتح الصفحة
+        async function loadSettings() {
+            try {
+                const docRef = doc(db, "settings", "general");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('leagueName').value = data.leagueName || "";
+                    document.getElementById('startDate').value = data.startDate || "";
+                    document.getElementById('winPoints').value = data.winPoints || 3;
+                    document.getElementById('currency').value = data.currency || "EGP";
+                    document.getElementById('showLeaderboard').checked = data.showLeaderboard;
+                    document.getElementById('firstPrize').value = data.firstPrize || "";
+                }
+            } catch (e) {
+                console.error("خطأ في التحميل:", e);
+            }
+        }
+
+        // دالة الحفظ
+        window.saveSettings = async () => {
+            const btn = document.getElementById('saveBtn');
+            btn.innerText = "جاري الحفظ...";
+            btn.disabled = true;
+
+            const settingsData = {
+                leagueName: document.getElementById('leagueName').value,
+                startDate: document.getElementById('startDate').value,
+                winPoints: Number(document.getElementById('winPoints').value),
+                currency: document.getElementById('currency').value,
+                showLeaderboard: document.getElementById('showLeaderboard').checked,
+                firstPrize: document.getElementById('firstPrize').value,
+                lastUpdated: new Date().toISOString()
+            };
+
+            try {
+                await setDoc(doc(db, "settings", "general"), settingsData);
+                alert("تمت عملية الحفظ بنجاح! ✅");
+            } catch (e) {
+                alert("حدث خطأ أثناء الحفظ!");
+            } finally {
+                btn.innerText = "حفظ التغييرات";
+                btn.disabled = false;
+            }
+        };
+
+        window.resetSettings = () => {
+            if(confirm("هل أنت متأكد من إعادة الضبط؟ سيتم مسح الإعدادات غير المحفوظة.")) {
+                location.reload();
+            }
+        };
+
+        loadSettings();
+    </script>
+</body>
+</html>

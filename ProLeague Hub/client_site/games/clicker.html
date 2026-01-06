@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحدي السرعة | ProLeague Hub Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background: #0f172a; color: white; overflow: hidden; }
+        .game-btn { transition: transform 0.1s active; }
+        .game-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div class="text-center p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl max-w-sm w-full">
+        <h1 class="text-2xl font-bold mb-2 text-blue-500">تحدي سرعة المحترفين</h1>
+        <p class="text-slate-400 text-sm mb-6">اضغط بأسرع ما لديك في 10 ثوانٍ!</p>
+
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <div class="bg-slate-800 p-4 rounded-2xl">
+                <p class="text-xs text-slate-500 uppercase">الوقت</p>
+                <p id="timer" class="text-2xl font-black text-yellow-500">10</p>
+            </div>
+            <div class="bg-slate-800 p-4 rounded-2xl">
+                <p class="text-xs text-slate-500 uppercase">النقاط</p>
+                <p id="score" class="text-2xl font-black text-green-500">0</p>
+            </div>
+        </div>
+
+        <button id="clickBtn" class="game-btn w-32 h-32 bg-blue-600 hover:bg-blue-500 rounded-full border-8 border-blue-900 shadow-lg text-4xl mb-8 mx-auto block">
+            ⚽
+        </button>
+
+        <button id="startBtn" class="w-full bg-white text-black py-3 rounded-xl font-bold hover:bg-slate-200 transition">
+            ابدأ التحدي
+        </button>
+
+        <p id="result" class="mt-4 font-bold text-blue-400 hidden italic"></p>
+    </div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 10;
+        let isPlaying = false;
+        let timerId;
+
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const clickBtn = document.getElementById('clickBtn');
+        const startBtn = document.getElementById('startBtn');
+        const resultDisplay = document.getElementById('result');
+
+        startBtn.addEventListener('click', () => {
+            if (isPlaying) return;
+            
+            // إعادة ضبط اللعبة
+            score = 0;
+            timeLeft = 10;
+            isPlaying = true;
+            scoreDisplay.innerText = score;
+            timerDisplay.innerText = timeLeft;
+            resultDisplay.classList.add('hidden');
+            startBtn.disabled = true;
+            startBtn.innerText = "جاري اللعب...";
+
+            // بدء العد التنازلي
+            timerId = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+
+                if (timeLeft === 0) {
+                    endGame();
+                }
+            }, 1000);
+        });
+
+        clickBtn.addEventListener('click', () => {
+            if (!isPlaying) return;
+            score++;
+            scoreDisplay.innerText = score;
+        });
+
+        function endGame() {
+            clearInterval(timerId);
+            isPlaying = false;
+            startBtn.disabled = false;
+            startBtn.innerText = "حاول مرة أخرى";
+            resultDisplay.innerText = `انتهى الوقت! أحرزت ${score} نقطة.`;
+            resultDisplay.classList.remove('hidden');
+            
+            // هنا مستقبلاً سنضيف كود لإرسال النتيجة لصفحة الإدارة
+            console.log("إرسال النتيجة إلى لوحة تحكم ProLeague Hub...");
+        }
+    </script>
+</body>
+</html>
